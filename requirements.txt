@@ -1,0 +1,35 @@
+# Core RAG stack
+langchain
+langchain-community
+langchain-openai
+langchain-huggingface
+langchain-chroma
+
+# Vector store
+chromadb
+
+# Embeddings (local, no API key needed)
+sentence-transformers
+
+# LLM options
+openai     # for GPT-4o / GPT-3.5 (paid)
+# ollama                # uncomment if using local Ollama (free)
+
+# Data handling
+datasets     # HuggingFace datasets
+pandas
+numpy
+requests
+
+# Document loaders
+pypdf
+unstructured
+
+# Evaluation / metrics
+ragas         # RAG evaluation framework (faithfulness, MRR, etc.)
+
+# Utilities
+tqdm
+python-dotenv
+rich         # pretty terminal output
+tiktoken
