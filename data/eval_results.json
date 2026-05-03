@@ -1,0 +1,902 @@
+[
+  {
+    "qid": "question 3152",
+    "question": "What is a critical component associated with error rates in quantum operations?",
+    "correct": "option 4: spectator errors",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research overview"
+  },
+  {
+    "qid": "question 6629",
+    "question": "What is the definition of data communications?",
+    "correct": "option 1: the movement of encoded information by means of communication techniques.",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research publications"
+  },
+  {
+    "qid": "question 8377",
+    "question": "What does the ambiguity function represent?",
+    "correct": "option 1: the correlation between points in the lattice",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research overview"
+  },
+  {
+    "qid": "question 7218",
+    "question": "The departure process in an M/M/s queue follows a:",
+    "correct": "option 1: poisson distribution.",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research publications"
+  },
+  {
+    "qid": "question 854",
+    "question": "What improvements can full-duplex communication potentially offer?",
+    "correct": "option 2: improved spectrum and energy efficiency",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research overview"
+  },
+  {
+    "qid": "question 9305",
+    "question": "Which 3GPP specification specifies the User Equipment (UE) to V2X control function protocol aspects? [3GPP Release 14]",
+    "correct": "option 1: ts 24.386",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Standards overview"
+  },
+  {
+    "qid": "question 8359",
+    "question": "Which 3GPP specification provides management provisions and solutions for edge computing? [3GPP Release 17]",
+    "correct": "option 3: ts 28.538",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Standards overview"
+  },
+  {
+    "qid": "question 8113",
+    "question": "When does the SPC switch to the channel allocated to the TMCTP-child PAN coordinator? [IEEE 802.15.4]",
+    "correct": "option 3: before the dbs slot time allocated to the tmctp-child pan coordinator",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Standards specifications"
+  },
+  {
+    "qid": "question 5541",
+    "question": "Which class uses the first bit of the first byte as 0? [TCP/IP]",
+    "correct": "option 3: class a",
+    "predicted": "option 3",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Standards overview"
+  },
+  {
+    "qid": "question 7408",
+    "question": "Are there any impacts on legacy UEs if the spatial element adaptation is used on a UE-specific basis? [3GPP Release 18]",
+    "correct": "option 2: no, there is no impact",
+    "predicted": "option 2",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Standards specifications"
+  },
+  {
+    "qid": "question 6632",
+    "question": "Which sublayer is responsible for header compression and decompression? [3GPP Release 18]",
+    "correct": "option 3: pdcp sublayer",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Standards specifications"
+  },
+  {
+    "qid": "question 9173",
+    "question": "Which communication system uses Airborne Collision Avoidance System to warn pilots of approaching aircraft?",
+    "correct": "option 1: airborne collision avoidance system",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research overview"
+  },
+  {
+    "qid": "question 5401",
+    "question": "What is the role of the central aggregation server in federated machine learning for intelligent IoT (Intelligent Internet-of-Things)?",
+    "correct": "option 1: maintaining and updating a global model",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research publications"
+  },
+  {
+    "qid": "question 6156",
+    "question": "What does the recipient of an RTS frame respond with? [IEEE 802.11]",
+    "correct": "option 4: a cts frame",
+    "predicted": "option 4",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Standards specifications"
+  },
+  {
+    "qid": "question 423",
+    "question": "How can data complexity be addressed in FL-based physical layer applications?",
+    "correct": "option 4: all of the above",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research publications"
+  },
+  {
+    "qid": "question 7794",
+    "question": "What is the purpose of the Connection Protocol in SSH?",
+    "correct": "option 4: multiplexing logical communications channels",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research publications"
+  },
+  {
+    "qid": "question 8376",
+    "question": "Which localization technique is based on the received signal strength at the receiver?",
+    "correct": "option 3: rssi",
+    "predicted": "option 3",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research overview"
+  },
+  {
+    "qid": "question 693",
+    "question": "What is the purpose of the mode 1-based AT (active transmission) in RIS-aided V2X (vehicle-to-everything)?",
+    "correct": "option 2: to allocate time-frequency resources specified by the bs",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research publications"
+  },
+  {
+    "qid": "question 2624",
+    "question": "What is the purpose of the distributed control plane in the SD-VEC infrastructure?",
+    "correct": "option 2: to ensure unified network status and control among distributed access nodes (ans)",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research publications"
+  },
+  {
+    "qid": "question 956",
+    "question": "How can SON (Self-Organizing Networks) help guarantee the QoS (quality-of-service) requirement of URLLC (Ultra-reliable low-latency communications)?",
+    "correct": "option 2: by providing intelligence, automatic, and distributed management and optimization",
+    "predicted": "option 2",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research publications"
+  },
+  {
+    "qid": "question 9817",
+    "question": "Which type of neural network emulates the function of a neural activation using an electrically adjustable resistance material?",
+    "correct": "option 3: physical neural networks",
+    "predicted": "option 3",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research overview"
+  },
+  {
+    "qid": "question 7304",
+    "question": "Why is the use of deep MLP (Multi-layer perceptron) alone declined for network traffic classification?",
+    "correct": "option 4: all of the above",
+    "predicted": "option 4",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research publications"
+  },
+  {
+    "qid": "question 4446",
+    "question": "Which media transport protocols are supported for MCVideo service? [3GPP Release 14]",
+    "correct": "option 1: rtp and srtp",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Standards overview"
+  },
+  {
+    "qid": "question 1502",
+    "question": "What is the difference between transport adjacency and iterated tunneling?",
+    "correct": "option 3: transport adjacency involves applying multiple security protocols to an ip packet without tunneling, while iterated tunneling involves multiple layers of security protocols through ip tunneling.",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 0.5,
+    "category": "Research publications"
+  },
+  {
+    "qid": "question 7582",
+    "question": "What is the relationship between the curvature of the decision boundary and the robustness of a network?",
+    "correct": "option 2: the lower the curvature, the more robust the network",
+    "predicted": "option 2",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research overview"
+  },
+  {
+    "qid": "question 2772",
+    "question": "Which type of LAP (Low-Altitude Platform) achieves higher autonomy and signal strength but has limited mobility?",
+    "correct": "option 2: tethered drones",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research publications"
+  },
+  {
+    "qid": "question 9196",
+    "question": "What is pilot contamination?",
+    "correct": "option 2: correlation between channel estimates of ues that use the same pilot",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research publications"
+  },
+  {
+    "qid": "question 351",
+    "question": "What is the HNB Name?",
+    "correct": "option 5: a human-readable name for the home nodeb/enodeb",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Lexicon"
+  },
+  {
+    "qid": "question 812",
+    "question": "How many demodulation branches are the radiated performance requirements limited to for SAN type 1-O? [3GPP Release 18]",
+    "correct": "option 1: up to 2 demodulation branches",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Standards specifications"
+  },
+  {
+    "qid": "question 1737",
+    "question": "Which type of polarization is most commonly used in cellular communications?",
+    "correct": "option 3: linear polarization",
+    "predicted": "option 3",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research publications"
+  },
+  {
+    "qid": "question 8634",
+    "question": "What triggers a Transmit Stream/Category Measurement report to be generated in the Average bit mode? [IEEE 802.11]",
+    "correct": "option 1: the number of msdus for the tc or ts that are discarded out of the number of preceding msdus",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Standards specifications"
+  },
+  {
+    "qid": "question 5106",
+    "question": "What are the different sources of sparsity in tensors?",
+    "correct": "option 4: all of the above",
+    "predicted": "option 4",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research overview"
+  },
+  {
+    "qid": "question 5094",
+    "question": "What is indexed modulation (IM)?",
+    "correct": "option 2: a modulation scheme that enables mapping transmission bits by tuning on/off status of subcarriers and transmit antennas",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research publications"
+  },
+  {
+    "qid": "question 7383",
+    "question": "Which statement is true regarding the IMS Multimedia Telephony service? [3GPP Release 17]",
+    "correct": "option 2: it supports real-time video and file transfer.",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Standards specifications"
+  },
+  {
+    "qid": "question 6789",
+    "question": "What does the acronym NA-ESRD stand for?",
+    "correct": "option 3: north american emergency services routing digits",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Lexicon"
+  },
+  {
+    "qid": "question 9181",
+    "question": "What is the relationship between Qn and Qn+1 in the M/D/s queue?",
+    "correct": "option 2: qn+1 = qn + xn+1 - s",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research publications"
+  },
+  {
+    "qid": "question 3624",
+    "question": "What type of transport technology is still extensively used to connect cell sites? ",
+    "correct": "option 2: microwave (mw)",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research overview"
+  },
+  {
+    "qid": "question 7308",
+    "question": "What makes UAV (Unmanned aerial vehicle) systems severely vulnerable in the presence of active eavesdroppers?",
+    "correct": "option 4: the availability of the csi of the legitimate receiver to the active eavesdropper",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research publications"
+  },
+  {
+    "qid": "question 1548",
+    "question": "What is Maurer's strategy for achieving positive rate in the wiretap channel?",
+    "correct": "option 1: communication over a public and error-free feedback channel to develop a secret key.",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research overview"
+  },
+  {
+    "qid": "question 1859",
+    "question": "What does the abbreviation QoS stand for?",
+    "correct": "option 4: quality of service",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research publications"
+  },
+  {
+    "qid": "question 2123",
+    "question": "What is the principal performance parameter to be considered in the design of a satellite constellation?",
+    "correct": "option 4: coverage",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research overview"
+  },
+  {
+    "qid": "question 5157",
+    "question": "What are the fading coefficients used to represent wireless link states?",
+    "correct": "option 2: channel realizations",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research overview"
+  },
+  {
+    "qid": "question 3613",
+    "question": "What is the purpose of the weights in a Deep Learning model?",
+    "correct": "option 4: to optimize the model through a training process.",
+    "predicted": "option 3",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research overview"
+  },
+  {
+    "qid": "question 1673",
+    "question": "What events should the Hosting E-UTRAN/NG-RAN Operator collect for accounting purposes? [3GPP Release 18]",
+    "correct": "option 3: both start and end of service for a ue",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Standards specifications"
+  },
+  {
+    "qid": "question 5468",
+    "question": "What is the decoding algorithm used for polar codes?",
+    "correct": "option 4: successive cancellation decoding",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research publications"
+  },
+  {
+    "qid": "question 4598",
+    "question": "In an FDD (Frequency Division Duplex) protocol, what is the pilot/feedback overhead equivalent to, in terms of the number of additional UL (Uplink) pilot signals? (M is the number of transmit antennas, K is the number of UEs)",
+    "correct": "option 5: m + k + max(m, k)/2",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research publications"
+  },
+  {
+    "qid": "question 5816",
+    "question": "What is the main function of the Wavelength Selective Switch (WSS) in an optical node?",
+    "correct": "option 2: to switch the circuits between different fiber cores",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research publications"
+  },
+  {
+    "qid": "question 3463",
+    "question": "Which protocol allows domain owners to create records associating domain names with authorized message senders?",
+    "correct": "option 4: spf",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research publications"
+  },
+  {
+    "qid": "question 6398",
+    "question": "What is the definition of a group temporal key (GTK)?",
+    "correct": "option 5: a random value, assigned by the group source, which is used to protect group addressed medium access control (mac) protocol data units (mpdus) from that source.",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 0.5,
+    "category": "Lexicon"
+  },
+  {
+    "qid": "question 8624",
+    "question": "What should a STA do if a frame matches an entry in the cache? [IEEE 802.11]",
+    "correct": "option 3: discard the frame",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Standards specifications"
+  },
+  {
+    "qid": "question 4195",
+    "question": "What are the two new network elements introduced in LTE-Advanced cellular networks for M2M (Machine-to-machine) communications?",
+    "correct": "option 2: mtcd and mtcg",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research publications"
+  },
+  {
+    "qid": "question 4995",
+    "question": "Which security attacks can be launched by exploiting the handover signaling messages?",
+    "correct": "option 1: denial-of-service, session hijacking, malicious mobile node flooding",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Standards overview"
+  },
+  {
+    "qid": "question 9891",
+    "question": "How can the transformation from a LCS to a GCS be expressed? [3GPP Release 18]",
+    "correct": "option 4: composite rotation matrix",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Standards specifications"
+  },
+  {
+    "qid": "question 4255",
+    "question": "What is the purpose of a PICS proforma? [IEEE 802.15.4]",
+    "correct": "option 2: to identify the supplier and implementation details of a protocol.",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Standards specifications"
+  },
+  {
+    "qid": "question 6011",
+    "question": "What is the definition of Fixed Network User Rate?",
+    "correct": "option 2: the user rate between iwf and the fixed network",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Lexicon"
+  },
+  {
+    "qid": "question 6000",
+    "question": "What are the two major periods in IEEE Std. 802.15.3d communications?",
+    "correct": "option 3: pairnet setup period (psp) and pairnet associated period (pap)",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research publications"
+  },
+  {
+    "qid": "question 802",
+    "question": "What does the acronym NA-ESRK refer to?",
+    "correct": "option 1: north american emergency services routing key",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Lexicon"
+  },
+  {
+    "qid": "question 9847",
+    "question": "What is network subset personalisation?",
+    "correct": "option 3: a refinement of network personalisation, which allows network operators to limit the usage of a me to a subset of (u)sims",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Lexicon"
+  },
+  {
+    "qid": "question 2984",
+    "question": "What are CMs (characteristic modes) commonly defined as?",
+    "correct": "option 3: current distributions diagonalizing both the impedance and radiation operators.",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research publications"
+  },
+  {
+    "qid": "question 6830",
+    "question": "What is the purpose of Cloud Computing based Coordinated Multi-Point (CC-CoMP)?",
+    "correct": "option 2: to achieve significant cooperative processing gains and mitigate intra-tier and inter-tier interference efficiently",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research publications"
+  },
+  {
+    "qid": "question 2927",
+    "question": "Which component validates the EAP (Extensible Authentication Protocol) peer's credentials and authorizes access to the network?",
+    "correct": "option 3: authentication server",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research publications"
+  },
+  {
+    "qid": "question 2827",
+    "question": "What is the definition of distribution system access function (DSAF)?",
+    "correct": "option 2: a function within an access point (ap) or mesh gate that uses the medium access control (mac) service and distribution system service (dss) to provide access between the distribution system (ds) and the wireless medium (wm)",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Lexicon"
+  },
+  {
+    "qid": "question 557",
+    "question": "Which protocol is used for calculating the tree structure in Spanning Tree Protocol (STP)? [IEEE 802.3]",
+    "correct": "option 5: con\ufb01guration bpdu (cbpdu)",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Standards overview"
+  },
+  {
+    "qid": "question 3810",
+    "question": "What is the main difference between conventional power allocation strategies and NOMA (non-orthogonal multiple access)?",
+    "correct": "option 1: conventional strategies allocate more power to users with strong channel conditions, while noma allocates more power to users with poor channel conditions.",
+    "predicted": "option 2",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research publications"
+  },
+  {
+    "qid": "question 5566",
+    "question": "What is the tradeoff between sending control messages through a mmWave or a microwave channel?",
+    "correct": "option 1: reliability and energy consumption",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research publications"
+  },
+  {
+    "qid": "question 7490",
+    "question": "What are the downsides of using unlicensed spectrum for long-range communication?",
+    "correct": "option 4: regulatory restrictions and link asymmetry",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research publications"
+  },
+  {
+    "qid": "question 7021",
+    "question": "Which approach models the delay-aware cross-layer optimization problem as an infinite horizon average cost Markov decision process?",
+    "correct": "option 2: markov decision process approach",
+    "predicted": "option 2",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research overview"
+  },
+  {
+    "qid": "question 4499",
+    "question": "What is included in the final SIP response for tracking applications generating charging information? [3GPP Release 18]",
+    "correct": "option 4: address or identifier of the hosting as and its application identifier",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Standards specifications"
+  },
+  {
+    "qid": "question 3076",
+    "question": "What is the purpose of a gateway in non-terrestrial networks?",
+    "correct": "option 5: to connect the non-terrestrial access network to the core network",
+    "predicted": "option 5",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research publications"
+  },
+  {
+    "qid": "question 2523",
+    "question": "What is the purpose of N19-based traffic forwarding? [3GPP Release 18]",
+    "correct": "option 1: to forward ul/dl traffic for 5g vn communication",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Standards specifications"
+  },
+  {
+    "qid": "question 250",
+    "question": "What is a hybrid regularization?",
+    "correct": "option 1: a method that combines several regularity measures for different representations of the signal",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research publications"
+  },
+  {
+    "qid": "question 7792",
+    "question": "What is the benefit of virtualization in the Frugal 5G network architecture?",
+    "correct": "option 3: it allows for easier upgrades",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Standards overview"
+  },
+  {
+    "qid": "question 1685",
+    "question": "Which materials are suitable for the fabrication of low-loss optical fibers?",
+    "correct": "option 5: glasses or glass-like materials",
+    "predicted": "option 5",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research publications"
+  },
+  {
+    "qid": "question 7998",
+    "question": "Which logical channel is used for transmitting control information between UEs and the network? [3GPP Release 18]",
+    "correct": "option 3: ccch",
+    "predicted": "option 3",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Standards specifications"
+  },
+  {
+    "qid": "question 2366",
+    "question": "What tradeoffs exist in UAV-enabled wireless communication?",
+    "correct": "option 4: all of the above",
+    "predicted": "option 4",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research publications"
+  },
+  {
+    "qid": "question 5978",
+    "question": "What is the main challenge for M-MIMO systems?",
+    "correct": "option 4: massive signal processing",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research overview"
+  },
+  {
+    "qid": "question 928",
+    "question": "What does GSM stand for?",
+    "correct": "option 5: global system for mobile communications",
+    "predicted": "option 5",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Lexicon"
+  },
+  {
+    "qid": "question 6210",
+    "question": "Which LPWA (Low Power Wide Area) standard supports only one-way communication from end devices to a base station?",
+    "correct": "option 4: weightless-n",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research overview"
+  },
+  {
+    "qid": "question 3588",
+    "question": "What is Synchronous Transmission?",
+    "correct": "option 2: a method of data transmission where data is sent in a continuous stream at a constant rate, synchronized by a common clock signal.",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Lexicon"
+  },
+  {
+    "qid": "question 6608",
+    "question": "What are some differences between Ethernet in the office environment and in the industrial environment? [IEEE 802.3]",
+    "correct": "option 4: all of the above",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Standards overview"
+  },
+  {
+    "qid": "question 9693",
+    "question": "Why is ensemble learning used in machine learning?",
+    "correct": "option 3: to combine the results of individual learning algorithms",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research overview"
+  },
+  {
+    "qid": "question 6573",
+    "question": "What is the primary advantage of using directional antennas in wireless networks? [IEEE 802.11]",
+    "correct": "option 2: they have higher sensitivity to radio signals in the dominant direction.",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Standards specifications"
+  },
+  {
+    "qid": "question 4547",
+    "question": "What is the purpose of the ECM Work Item and the resulting specification in TS 28.538? [3GPP Release 17]",
+    "correct": "option 1: to provide management provisions and solutions for edge computing",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Standards overview"
+  },
+  {
+    "qid": "question 4531",
+    "question": "What is the purpose of the FCS (Frame Check Sequence) field in the MAC (Medium Access Control) frame format?",
+    "correct": "option 5: to perform error detection",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research publications"
+  },
+  {
+    "qid": "question 5972",
+    "question": "What factor has a strong impact on the interference between cores in MCFs?",
+    "correct": "option 2: arrangement of the cores",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research publications"
+  },
+  {
+    "qid": "question 7476",
+    "question": "What is the impact on UE power consumption with the reduction of TRPs? [3GPP Release 18]",
+    "correct": "option 3: increase in power consumption",
+    "predicted": "option 3",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Standards specifications"
+  },
+  {
+    "qid": "question 826",
+    "question": "What can RF (radio frequency) sensing such as using Wi-Fi signals overcome?",
+    "correct": "option 4: blockages of visible light",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research publications"
+  },
+  {
+    "qid": "question 6825",
+    "question": "Which LPWA (Low Power Wide Area) technology has encryption support?",
+    "correct": "option 2: lorawan",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research overview"
+  },
+  {
+    "qid": "question 4426",
+    "question": "What is the 5th generation of mobile systems referred to as?",
+    "correct": "option 4: 5g",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research overview"
+  },
+  {
+    "qid": "question 2795",
+    "question": "What is the main purpose of an IOS (intelligent omni-surface)?",
+    "correct": "option 2: to provide coverage to users",
+    "predicted": "option 2",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research publications"
+  },
+  {
+    "qid": "question 9430",
+    "question": "What role do social networks play in information propagation over the Internet?",
+    "correct": "option 2: they are the main carriers of data traffic",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research publications"
+  },
+  {
+    "qid": "question 9559",
+    "question": "What does a correlator do in direct-sequence transmission? [IEEE 802.11]",
+    "correct": "option 3: recovers the original signal from the spread rf carrier",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Standards overview"
+  },
+  {
+    "qid": "question 9391",
+    "question": "Which dataset is a large scale image dataset introduced in 2010 that contains 256x256 pixel color images with 1000 classes?",
+    "correct": "option 3: imagenet",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research overview"
+  },
+  {
+    "qid": "question 6870",
+    "question": "Which type of antennas produce electric fields tangential to human tissues?",
+    "correct": "option 2: loop antennas",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research publications"
+  },
+  {
+    "qid": "question 9462",
+    "question": "Which 3GPP working group is responsible for the security aspects of the EAP Re-authentication Protocol (ERP)? [3GPP Release 14]",
+    "correct": "option 4: sa3",
+    "predicted": "option 4",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Standards specifications"
+  },
+  {
+    "qid": "question 1230",
+    "question": "What does RLSS stand for?",
+    "correct": "option 4: registered location secure server",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Lexicon"
+  },
+  {
+    "qid": "question 4269",
+    "question": "In the context of object position detection in robotic applications, what has been observed to significantly improve estimation accuracy?",
+    "correct": "option 3: using a combination of a small training dataset of real images and a large dataset of synthetic images",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research publications"
+  },
+  {
+    "qid": "question 8259",
+    "question": "What does the ImageNet Challenge involve?",
+    "correct": "option 2: image classification",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research overview"
+  },
+  {
+    "qid": "question 9986",
+    "question": "What functions are included in the Online Charging System (OCS)? [3GPP Release 18]",
+    "correct": "option 1: online charging function (ocf) and account balance management function (abmf)",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Standards specifications"
+  },
+  {
+    "qid": "question 2350",
+    "question": "What does big data refer to?",
+    "correct": "option 4: enormous amounts of data produced throughout the internet of things (iot).",
+    "predicted": "option 1",
+    "is_correct": false,
+    "mrr": 1.0,
+    "category": "Research overview"
+  }
+]
