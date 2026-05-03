@@ -20,6 +20,7 @@ Architecture:
         ▼
     Answer + Sources
 """
+import re
 from typing import List, Dict, Any
 
 from langchain_chroma import Chroma
@@ -187,6 +188,20 @@ class TelecomRAG:
             "Which option is correct? Explain your reasoning step by step."
         )
         return self.ask(formatted_q)
+
+    def _parse_predicted_answer(self, llm_answer: str, options: List[str]) -> str:
+        """Extract an 'option N' label from a multiple-choice LLM answer."""
+        answer_lower = llm_answer.lower()
+        match = re.search(r"\boption\s*([1-5])\b", answer_lower)
+        if match:
+            return f"option {match.group(1)}"
+
+        for i, opt in enumerate(options, 1):
+            option_prefix = opt.strip().lower()[:30]
+            if option_prefix and option_prefix in answer_lower:
+                return f"option {i}"
+
+        return "unknown"
 
 
 # ── Quick test ────────────────────────────────────────────────────────

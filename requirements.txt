@@ -13,13 +13,15 @@ sentence-transformers
 
 # LLM options
 openai     # for GPT-4o / GPT-3.5 (paid)
-# ollama                # uncomment if using local Ollama (free)
+langchain-groq
+langchain-ollama
 
 # Data handling
 datasets     # HuggingFace datasets
 pandas
 numpy
 requests
+pyzipper
 
 # Document loaders
 pypdf
@@ -33,3 +35,4 @@ tqdm
 python-dotenv
 rich         # pretty terminal output
 tiktoken
+pytest

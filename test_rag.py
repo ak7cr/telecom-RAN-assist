@@ -119,3 +119,14 @@ def test_compute_reciprocal_rank():
     docs_no_match = [Document(page_content="unrelated content")]
     rr2 = ev._compute_reciprocal_rank(docs_no_match, "option 5")
     assert rr2 == 0.0
+
+
+def test_evaluator_normalizes_teleqna_answer():
+    """TeleQnA answers include option text; evaluator should compare labels."""
+    from evaluator import TelecomRAGEvaluator
+
+    with patch.object(TelecomRAGEvaluator, '__init__', lambda *a, **k: None):
+        ev = TelecomRAGEvaluator.__new__(TelecomRAGEvaluator)
+
+    assert ev._parse_correct_answer("option 4: the full answer text") == "option 4"
+    assert ev._parse_correct_answer("Option 2") == "option 2"

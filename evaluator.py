@@ -16,6 +16,7 @@ Usage:
 import json
 import argparse
 import random
+import re
 from pathlib import Path
 from typing import List, Dict, Optional
 from dataclasses import dataclass, field
@@ -26,6 +27,7 @@ from rich.table import Table
 
 from data_loader import download_teleqna
 from rag_chain import TelecomRAG
+from config import LLM_PROVIDER, LLM_MODEL, OLLAMA_BASE_URL, USE_OLLAMA
 
 console = Console()
 
@@ -87,14 +89,23 @@ class TelecomRAGEvaluator:
         """
         answer_lower = llm_answer.lower()
         # Try "option N" format
-        for i in range(1, 6):
-            if f"option {i}" in answer_lower:
-                return f"option {i}"
+        match = re.search(r"\boption\s*([1-5])\b", answer_lower)
+        if match:
+            return f"option {match.group(1)}"
+
         # Try matching option text
         for i, opt in enumerate(options, 1):
-            if opt.lower()[:30] in answer_lower:
+            option_prefix = opt.strip().lower()[:30]
+            if option_prefix and option_prefix in answer_lower:
                 return f"option {i}"
         return "unknown"
+
+    def _parse_correct_answer(self, answer: str) -> str:
+        """Normalize TeleQnA answers like 'option 4: text' to 'option 4'."""
+        match = re.search(r"\boption\s*([1-5])\b", answer.lower())
+        if match:
+            return f"option {match.group(1)}"
+        return answer.strip().lower()
 
     def _compute_reciprocal_rank(self, sources: List, correct_answer: str) -> float:
         """Check if any retrieved source mentions the correct answer, return 1/rank."""
@@ -102,6 +113,30 @@ class TelecomRAGEvaluator:
             if correct_answer.lower() in doc.page_content.lower():
                 return 1.0 / rank
         return 0.0
+
+    def _provider_error_message(self, error: Exception) -> Optional[str]:
+        """Return a setup hint for LLM provider errors that should stop evaluation."""
+        message = str(error).lower()
+        using_ollama = USE_OLLAMA or LLM_PROVIDER == "ollama"
+
+        if using_ollama and (
+            "connection refused" in message
+            or "failed to connect" in message
+            or "[errno 61]" in message
+            or "server disconnected" in message
+        ):
+            return (
+                "Could not connect to Ollama while evaluating.\n\n"
+                f"Current config: LLM_PROVIDER=ollama, LLM_MODEL={LLM_MODEL}, "
+                f"OLLAMA_BASE_URL={OLLAMA_BASE_URL}\n\n"
+                "Start Ollama and make sure the model is available:\n"
+                "  ollama serve\n"
+                f"  ollama pull {LLM_MODEL}\n\n"
+                "Or switch .env to another provider such as Groq/OpenAI and set the "
+                "matching API key."
+            )
+
+        return None
 
     def run(self) -> List[EvalResult]:
         results = []
@@ -111,7 +146,8 @@ class TelecomRAGEvaluator:
         for qid, entry in tqdm(self.data.items(), desc="Evaluating"):
             question       = entry.get("question", "")
             options        = self._extract_options(entry)
-            correct_answer = entry.get("answer", "").strip().lower()
+            raw_answer     = entry.get("answer", "")
+            correct_answer = self._parse_correct_answer(raw_answer)
             category       = entry.get("category", "")
 
             # Ask the RAG system
@@ -119,12 +155,16 @@ class TelecomRAGEvaluator:
                 result = self.rag.ask_mcq(question, options)
                 predicted = self._parse_predicted_answer(result["answer"], options)
                 is_correct = predicted.lower() == correct_answer.lower()
-                rr = self._compute_reciprocal_rank(result["sources"], correct_answer)
+                rr = self._compute_reciprocal_rank(result["sources"], raw_answer)
                 source_ids = [
                     d.metadata.get("question_id", d.metadata.get("source", ""))
                     for d in result["sources"]
                 ]
             except Exception as e:
+                provider_error = self._provider_error_message(e)
+                if provider_error:
+                    raise RuntimeError(provider_error) from e
+
                 console.print(f"[red]Error on {qid}: {e}[/red]")
                 predicted, is_correct, rr, source_ids = "error", False, 0.0, []
 
@@ -145,6 +185,10 @@ class TelecomRAGEvaluator:
     def report(self, results: List[EvalResult]):
         """Print a rich summary table of evaluation metrics."""
         n          = len(results)
+        if n == 0:
+            console.print("[yellow]No questions matched the evaluation filters.[/yellow]")
+            return
+
         accuracy   = sum(r.is_correct for r in results) / n
         mrr        = sum(r.reciprocal_rank for r in results) / n
         top1_acc   = accuracy  # same as accuracy for MCQ
