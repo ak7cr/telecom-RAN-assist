@@ -1,4 +1,4 @@
-# 📡 Telecom RAN Assistant — RAG System
+#  Telecom RAN Assistant — RAG System
 
 A **Retrieval-Augmented Generation (RAG)** system for answering telecom RAN questions,
 built with LangChain, ChromaDB, and the TeleQnA benchmark dataset.
