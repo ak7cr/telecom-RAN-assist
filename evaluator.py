@@ -4,14 +4,16 @@ Evaluates the RAG system against the TeleQnA benchmark.
 
 Metrics (aligned with project KPIs):
     - Accuracy          : correct answer rate on MCQ questions
-    - Top-k Accuracy    : correct answer in top-k retrieved docs
-    - MRR               : Mean Reciprocal Rank of correct answer
-    - Faithfulness      : via RAGAS (answer grounded in context)
+    - Top-k Accuracy    : correct answer appears in top-k retrieved docs
+    - Recall            : retrieved docs contain ground-truth answer text
+    - MRR               : Mean Reciprocal Rank of correct answer in sources
+    - Faithfulness      : via RAGAS (answer grounded in context) [--faithfulness flag]
 
 Usage:
-    python -m src.evaluator --n 100           # evaluate on 100 random questions
-    python -m src.evaluator --category "Standards specifications"
-    python -m src.evaluator --full            # full 10k evaluation (slow)
+    python evaluator.py --n 100
+    python evaluator.py --n 200 --category "Standards specifications"
+    python evaluator.py --full
+    python evaluator.py --n 50 --reranker --hyde --faithfulness
 """
 import json
 import argparse
@@ -42,16 +44,25 @@ class EvalResult:
     correct_answer: str
     predicted_answer: str
     is_correct: bool
-    reciprocal_rank: float   # 1/rank if found, 0 otherwise
+    reciprocal_rank: float         # 1/rank if found in sources, 0 otherwise
+    recall_hit: bool = False       # True if ground-truth answer text in any retrieved doc
     retrieved_sources: List[str] = field(default_factory=list)
+    generated_answer: str = ""     # raw LLM answer (for RAGAS faithfulness)
+    contexts: List[str] = field(default_factory=list)  # raw page_content for RAGAS
     category: str = ""
 
 
 # ── Core evaluation ───────────────────────────────────────────────────
 
 class TelecomRAGEvaluator:
-    def __init__(self, n_samples: int = 100, category: Optional[str] = None):
-        self.rag      = TelecomRAG(use_mmr=True)
+    def __init__(
+        self,
+        n_samples: int = 100,
+        category: Optional[str] = None,
+        use_reranker: bool = False,
+        use_hyde: bool = False,
+    ):
+        self.rag      = TelecomRAG(use_mmr=True, use_reranker=use_reranker, use_hyde=use_hyde)
         self.n        = n_samples
         self.category = category
         self.data     = self._load_data()
@@ -114,6 +125,11 @@ class TelecomRAGEvaluator:
                 return 1.0 / rank
         return 0.0
 
+    def _compute_recall_hit(self, sources: List, raw_answer: str) -> bool:
+        """True if ANY retrieved source contains the ground-truth answer text."""
+        needle = raw_answer.lower()
+        return any(needle in doc.page_content.lower() for doc in sources)
+
     def _provider_error_message(self, error: Exception) -> Optional[str]:
         """Return a setup hint for LLM provider errors that should stop evaluation."""
         message = str(error).lower()
@@ -152,21 +168,24 @@ class TelecomRAGEvaluator:
 
             # Ask the RAG system
             try:
-                result = self.rag.ask_mcq(question, options)
-                predicted = self._parse_predicted_answer(result["answer"], options)
-                is_correct = predicted.lower() == correct_answer.lower()
-                rr = self._compute_reciprocal_rank(result["sources"], raw_answer)
-                source_ids = [
+                result      = self.rag.ask_mcq(question, options)
+                predicted   = self._parse_predicted_answer(result["answer"], options)
+                is_correct  = predicted.lower() == correct_answer.lower()
+                rr          = self._compute_reciprocal_rank(result["sources"], raw_answer)
+                recall_hit  = self._compute_recall_hit(result["sources"], raw_answer)
+                source_ids  = [
                     d.metadata.get("question_id", d.metadata.get("source", ""))
                     for d in result["sources"]
                 ]
+                contexts    = [d.page_content for d in result["sources"]]
             except Exception as e:
                 provider_error = self._provider_error_message(e)
                 if provider_error:
                     raise RuntimeError(provider_error) from e
 
                 console.print(f"[red]Error on {qid}: {e}[/red]")
-                predicted, is_correct, rr, source_ids = "error", False, 0.0, []
+                predicted, is_correct, rr = "error", False, 0.0
+                recall_hit, source_ids, contexts = False, [], []
 
             results.append(EvalResult(
                 question_id=qid,
@@ -176,24 +195,54 @@ class TelecomRAGEvaluator:
                 predicted_answer=predicted,
                 is_correct=is_correct,
                 reciprocal_rank=rr,
+                recall_hit=recall_hit,
                 retrieved_sources=source_ids,
+                generated_answer=result.get("answer", "") if isinstance(result, dict) else "",
+                contexts=contexts,
                 category=category,
             ))
 
         return results
 
-    def report(self, results: List[EvalResult]):
+    def _compute_faithfulness(self, results: List[EvalResult]) -> Optional[float]:
+        """
+        Compute faithfulness using RAGAS — measures how well the answer
+        is grounded in the retrieved context (no hallucination).
+        Requires an LLM (uses current config provider).
+        """
+        try:
+            from datasets import Dataset as HFDataset
+            from ragas import evaluate
+            from ragas.metrics import faithfulness
+
+            data = {
+                "question": [r.question for r in results],
+                "answer":   [r.generated_answer for r in results],
+                "contexts": [r.contexts for r in results],
+            }
+            dataset = HFDataset.from_dict(data)
+            score   = evaluate(dataset, metrics=[faithfulness])
+            return float(score["faithfulness"])
+        except Exception as exc:
+            console.print(f"[yellow]RAGAS faithfulness skipped: {exc}[/yellow]")
+            return None
+
+    def report(self, results: List[EvalResult], run_faithfulness: bool = False):
         """Print a rich summary table of evaluation metrics."""
-        n          = len(results)
+        n = len(results)
         if n == 0:
             console.print("[yellow]No questions matched the evaluation filters.[/yellow]")
             return
 
-        accuracy   = sum(r.is_correct for r in results) / n
-        mrr        = sum(r.reciprocal_rank for r in results) / n
-        top1_acc   = accuracy  # same as accuracy for MCQ
-        # Top-5: answer is in sources
-        top5_acc   = sum(r.reciprocal_rank > 0 for r in results) / n
+        accuracy  = sum(r.is_correct for r in results) / n
+        mrr       = sum(r.reciprocal_rank for r in results) / n
+        top5_acc  = sum(r.reciprocal_rank > 0 for r in results) / n
+        recall    = sum(r.recall_hit for r in results) / n
+
+        faithfulness_score: Optional[float] = None
+        if run_faithfulness:
+            console.print("\n[dim]Computing RAGAS faithfulness (this may take a moment)…[/dim]")
+            faithfulness_score = self._compute_faithfulness(results)
 
         # Per-category breakdown
         categories: Dict[str, List] = {}
@@ -204,27 +253,43 @@ class TelecomRAGEvaluator:
         table = Table(title="TelecomRAG Evaluation Results", show_header=True)
         table.add_column("Metric",     style="cyan",  justify="left")
         table.add_column("Score",      style="green", justify="right")
-        table.add_column("KPI Target", style="yellow",justify="right")
+        table.add_column("KPI Target", style="yellow", justify="right")
         table.add_column("Status",     justify="center")
 
         def status(val, target):
             return "✅" if val >= target else "❌"
 
-        table.add_row("Accuracy",       f"{accuracy*100:.1f}%", "80%", status(accuracy, 0.80))
-        table.add_row("Top-5 Accuracy", f"{top5_acc*100:.1f}%", "85%", status(top5_acc, 0.85))
-        table.add_row("MRR",            f"{mrr*100:.1f}%",      "75%", status(mrr, 0.75))
-        table.add_row("N questions",    str(n),                  "-",   "-")
+        table.add_row("Accuracy",       f"{accuracy*100:.1f}%",  "80%", status(accuracy, 0.80))
+        table.add_row("Top-5 Accuracy", f"{top5_acc*100:.1f}%",  "85%", status(top5_acc, 0.85))
+        table.add_row("Recall",         f"{recall*100:.1f}%",    "85%", status(recall, 0.85))
+        table.add_row("MRR",            f"{mrr*100:.1f}%",       "75%", status(mrr, 0.75))
+        if faithfulness_score is not None:
+            table.add_row(
+                "Faithfulness",
+                f"{faithfulness_score*100:.1f}%",
+                "90%",
+                status(faithfulness_score, 0.90),
+            )
+        table.add_row("N questions", str(n), "-", "-")
 
         console.print(table)
 
         # Per-category
         cat_table = Table(title="Accuracy by Category")
-        cat_table.add_column("Category",  style="cyan")
-        cat_table.add_column("N",         style="dim",  justify="right")
-        cat_table.add_column("Accuracy",  style="green",justify="right")
+        cat_table.add_column("Category", style="cyan")
+        cat_table.add_column("N",        style="dim",  justify="right")
+        cat_table.add_column("Accuracy", style="green", justify="right")
+        cat_table.add_column("Recall",   style="blue",  justify="right")
         for cat, correct_list in sorted(categories.items()):
-            acc = sum(correct_list) / len(correct_list)
-            cat_table.add_row(cat, str(len(correct_list)), f"{acc*100:.1f}%")
+            cat_results = [r for r in results if r.category == cat]
+            cat_acc    = sum(correct_list) / len(correct_list)
+            cat_recall = sum(r.recall_hit for r in cat_results) / len(cat_results)
+            cat_table.add_row(
+                cat,
+                str(len(correct_list)),
+                f"{cat_acc*100:.1f}%",
+                f"{cat_recall*100:.1f}%",
+            )
         console.print(cat_table)
 
         # Save results to JSON
@@ -233,17 +298,19 @@ class TelecomRAGEvaluator:
             json.dump(
                 [
                     {
-                        "qid": r.question_id,
-                        "question": r.question,
-                        "correct": r.correct_answer,
+                        "qid":       r.question_id,
+                        "question":  r.question,
+                        "correct":   r.correct_answer,
                         "predicted": r.predicted_answer,
-                        "is_correct": r.is_correct,
-                        "mrr": r.reciprocal_rank,
-                        "category": r.category,
+                        "is_correct":  r.is_correct,
+                        "recall_hit":  r.recall_hit,
+                        "mrr":         r.reciprocal_rank,
+                        "category":    r.category,
+                        "faithfulness": faithfulness_score,
                     }
                     for r in results
                 ],
-                f, indent=2
+                f, indent=2,
             )
         console.print(f"\n[dim]Full results saved → {out_path}[/dim]")
 
@@ -252,14 +319,22 @@ class TelecomRAGEvaluator:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Evaluate TelecomRAG on TeleQnA")
-    parser.add_argument("--n",        type=int, default=100, help="Number of questions")
-    parser.add_argument("--category", type=str, default=None, help="Filter by category")
-    parser.add_argument("--full",     action="store_true",   help="Run all 10k questions")
+    parser.add_argument("--n",           type=int,  default=100,  help="Number of questions to evaluate")
+    parser.add_argument("--category",    type=str,  default=None, help="Filter by TeleQnA category")
+    parser.add_argument("--full",        action="store_true",     help="Run all 10k questions (slow)")
+    parser.add_argument("--reranker",    action="store_true",     help="Enable cross-encoder reranker")
+    parser.add_argument("--hyde",        action="store_true",     help="Enable HyDE retrieval")
+    parser.add_argument("--faithfulness",action="store_true",     help="Compute RAGAS faithfulness score")
     args = parser.parse_args()
 
     if args.full:
         args.n = 10_000
 
-    evaluator = TelecomRAGEvaluator(n_samples=args.n, category=args.category)
-    results   = evaluator.run()
-    evaluator.report(results)
+    evaluator = TelecomRAGEvaluator(
+        n_samples=args.n,
+        category=args.category,
+        use_reranker=args.reranker,
+        use_hyde=args.hyde,
+    )
+    results = evaluator.run()
+    evaluator.report(results, run_faithfulness=args.faithfulness)

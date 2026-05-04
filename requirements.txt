@@ -36,3 +36,4 @@ python-dotenv
 rich         # pretty terminal output
 tiktoken
 pytest
+streamlit    # web UI
