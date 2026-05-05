@@ -1,11 +1,22 @@
 """
 ingest.py
-Builds (or refreshes) the ChromaDB vector store from TeleQnA + optional PDFs.
+Builds (or refreshes) the ChromaDB vector store from all configured sources.
 
 Usage:
-    python -m src.ingest
-    python -m src.ingest --pdf_dir ./data/3gpp_specs
-    python -m src.ingest --reset       # wipe and rebuild from scratch
+    python ingest.py                          # TeleQnA only (baseline)
+    python ingest.py --all                    # every HuggingFace dataset + TeleQnA
+    python ingest.py --telelogs --oran-bench  # pick specific sources
+    python ingest.py --tele-eval 3000         # sample 3k rows from Tele-Eval
+    python ingest.py --pdf_dir ./data/pdfs    # add local 3GPP PDF specs
+    python ingest.py --reset                  # wipe and rebuild from scratch
+
+Sources:
+    TeleQnA     — always included (10k 3GPP MCQ)
+    --telelogs  — netop/TeleLogs  (5G RCA scenarios)
+    --teletables — netop/TeleTables (3GPP spec-table MCQ)
+    --tele-eval N — AliMaatouk/Tele-Eval (stream N open-ended Q&A pairs)
+    --oran-bench  — GSMA/ot-full oranbench (1,500 O-RAN Q&A)
+    --pdf_dir   — local directory of 3GPP PDF files
 """
 import argparse
 from pathlib import Path
@@ -22,10 +33,13 @@ def build_vectorstore(
     pdf_dir: str = None,
     reset: bool = False,
     collection_name: str = "telecom_rag",
+    include_telelogs: bool = False,
+    include_teletables: bool = False,
+    tele_eval_samples: int = 0,
+    include_oran_bench: bool = False,
 ) -> Chroma:
     """
-    Load documents, embed them, and persist to ChromaDB.
-    Returns the ready-to-query Chroma vectorstore.
+    Load documents from all requested sources, embed, and persist to ChromaDB.
     """
     persist_dir = Path(CHROMA_PERSIST_DIR)
 
@@ -36,7 +50,6 @@ def build_vectorstore(
 
     embeddings = get_embeddings()
 
-    # If store already exists and we're not resetting, just load it
     if persist_dir.exists() and not reset:
         print(f"[ingest] Loading existing vector store from {persist_dir}")
         return Chroma(
@@ -45,24 +58,28 @@ def build_vectorstore(
             persist_directory=str(persist_dir),
         )
 
-    # ── Load & split ─────────────────────────────────────────────────
-    docs = load_all_documents(pdf_dir=pdf_dir)
+    # ── Load all sources ─────────────────────────────────────────────
+    docs = load_all_documents(
+        pdf_dir=pdf_dir,
+        include_telelogs=include_telelogs,
+        include_teletables=include_teletables,
+        tele_eval_samples=tele_eval_samples,
+        include_oran_bench=include_oran_bench,
+    )
 
-    # TeleQnA docs are already short Q&A blocks; PDFs need splitting
+    # HuggingFace Q&A docs and TeleQnA entries are already short;
+    # only long PDF chunks need re-splitting.
     splitter = RecursiveCharacterTextSplitter(
         chunk_size=CHUNK_SIZE,
         chunk_overlap=CHUNK_OVERLAP,
         separators=["\n\n", "\n", ". ", " ", ""],
     )
-
-    # Only split long docs (PDFs). TeleQnA entries are fine as-is.
     short_docs = [d for d in docs if len(d.page_content) <= CHUNK_SIZE * 1.5]
     long_docs  = [d for d in docs if len(d.page_content) >  CHUNK_SIZE * 1.5]
-    split_long = splitter.split_documents(long_docs)
-    all_chunks = short_docs + split_long
+    all_chunks = short_docs + splitter.split_documents(long_docs)
 
     print(f"[ingest] Total chunks to embed: {len(all_chunks)}")
-    print("[ingest] Embedding … (this may take a few minutes on first run)")
+    print("[ingest] Embedding … (this may take several minutes on first run)")
 
     # ── Embed in batches to avoid OOM ────────────────────────────────
     BATCH = 500
@@ -86,8 +103,28 @@ def build_vectorstore(
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Build TelecomRAG vector store")
-    parser.add_argument("--pdf_dir", default=None, help="Dir with 3GPP PDF specs")
-    parser.add_argument("--reset", action="store_true", help="Wipe and rebuild")
+    parser.add_argument("--pdf_dir",     default=None, help="Directory of 3GPP PDF specs")
+    parser.add_argument("--reset",       action="store_true", help="Wipe and rebuild from scratch")
+    parser.add_argument("--all",         action="store_true", help="Include all HuggingFace datasets")
+    parser.add_argument("--telelogs",    action="store_true", help="Add TeleLogs RCA scenarios")
+    parser.add_argument("--teletables",  action="store_true", help="Add TeleTables 3GPP table Q&A")
+    parser.add_argument("--tele-eval",   type=int, default=0,  dest="tele_eval",
+                        metavar="N",     help="Stream N samples from Tele-Eval (default 0 = skip)")
+    parser.add_argument("--oran-bench",  action="store_true", dest="oran_bench",
+                        help="Add O-RAN Bench (1,500 O-RAN Q&A from GSMA/ot-full)")
     args = parser.parse_args()
 
-    build_vectorstore(pdf_dir=args.pdf_dir, reset=args.reset)
+    if args.all:
+        args.telelogs   = True
+        args.teletables = True
+        args.tele_eval  = args.tele_eval or 3000
+        args.oran_bench = True
+
+    build_vectorstore(
+        pdf_dir=args.pdf_dir,
+        reset=args.reset,
+        include_telelogs=args.telelogs,
+        include_teletables=args.teletables,
+        tele_eval_samples=args.tele_eval,
+        include_oran_bench=args.oran_bench,
+    )

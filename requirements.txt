@@ -12,12 +12,17 @@ chromadb
 sentence-transformers
 
 # LLM options
-openai     # for GPT-4o / GPT-3.5 (paid)
-langchain-groq
+openai          # GPT-4o / GPT-4o-mini (paid)
+langchain-groq  # Groq cloud — free tier, fast (recommended for eval)
 langchain-ollama
 
+# HuggingFace Tele-LLMs (LLM_PROVIDER=huggingface)
+# Enables: AliMaatouk/Llama-3-8B-Instruct-Tele and other Tele-LLMs
+transformers
+accelerate
+
 # Data handling
-datasets     # HuggingFace datasets
+datasets     # HuggingFace datasets (TeleLogs, TeleTables, Tele-Eval, O-RAN Bench)
 pandas
 numpy
 requests
