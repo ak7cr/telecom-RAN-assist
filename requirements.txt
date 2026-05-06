@@ -1,9 +1,11 @@
 # Core RAG stack
 langchain
+langchain-core
 langchain-community
 langchain-openai
 langchain-huggingface
 langchain-chroma
+langchain-text-splitters
 
 # Vector store
 chromadb
