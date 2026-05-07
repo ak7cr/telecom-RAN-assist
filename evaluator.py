@@ -96,13 +96,20 @@ class TelecomRAGEvaluator:
     def _parse_predicted_answer(self, llm_answer: str, options: List[str]) -> str:
         """
         Extract which option the LLM chose from its free-text response.
-        Looks for 'option N' or the option text itself.
+        Priority:
+          1. 'Final answer: option N'   (the explicit format we asked for)
+          2. The LAST 'option N' mention (the model may discuss others while reasoning)
+          3. Match against option text
         """
         answer_lower = llm_answer.lower()
-        # Try "option N" format
-        match = re.search(r"\boption\s*([1-5])\b", answer_lower)
-        if match:
-            return f"option {match.group(1)}"
+
+        final = re.search(r"final\s*answer\s*[:\-]?\s*option\s*([1-5])", answer_lower)
+        if final:
+            return f"option {final.group(1)}"
+
+        all_mentions = re.findall(r"\boption\s*([1-5])\b", answer_lower)
+        if all_mentions:
+            return f"option {all_mentions[-1]}"
 
         # Try matching option text
         for i, opt in enumerate(options, 1):
@@ -118,17 +125,58 @@ class TelecomRAGEvaluator:
             return f"option {match.group(1)}"
         return answer.strip().lower()
 
-    def _compute_reciprocal_rank(self, sources: List, correct_answer: str) -> float:
-        """Check if any retrieved source mentions the correct answer, return 1/rank."""
+    def _answer_text(self, entry: Dict, options: List[str]) -> str:
+        """
+        Extract the *text* of the correct option (e.g. the actual content, not 'option 4').
+        Used to check whether retrieved PDF chunks contain the answer's substance.
+        """
+        raw = entry.get("answer", "")
+        match = re.search(r"\boption\s*([1-5])\b", raw.lower())
+        if match:
+            idx = int(match.group(1)) - 1
+            if 0 <= idx < len(options):
+                return options[idx]
+        # Fallback: text after the colon, e.g. "option 4: <text>"
+        if ":" in raw:
+            return raw.split(":", 1)[1].strip()
+        return raw
+
+    def _significant_terms(self, text: str) -> List[str]:
+        """Tokenise to lowercase content terms (>=4 chars), drop stopwords."""
+        stop = {
+            "the", "and", "for", "with", "that", "this", "from", "into", "are",
+            "was", "were", "have", "has", "been", "will", "would", "shall",
+            "can", "may", "such", "any", "all", "not", "but", "which", "when",
+            "what", "where", "option",
+        }
+        words = re.findall(r"[a-zA-Z][a-zA-Z0-9\-]{3,}", text.lower())
+        return [w for w in words if w not in stop]
+
+    def _compute_reciprocal_rank(self, sources: List, answer_text: str) -> float:
+        """1/rank of the first retrieved doc that contains the answer's key terms."""
+        terms = self._significant_terms(answer_text)
+        if not terms:
+            return 0.0
+        # Need at least half of the answer's content terms (or 3, whichever smaller) to count.
+        threshold = max(1, min(3, len(terms) // 2))
         for rank, doc in enumerate(sources, 1):
-            if correct_answer.lower() in doc.page_content.lower():
+            page = doc.page_content.lower()
+            hits = sum(1 for t in terms if t in page)
+            if hits >= threshold:
                 return 1.0 / rank
         return 0.0
 
-    def _compute_recall_hit(self, sources: List, raw_answer: str) -> bool:
-        """True if ANY retrieved source contains the ground-truth answer text."""
-        needle = raw_answer.lower()
-        return any(needle in doc.page_content.lower() for doc in sources)
+    def _compute_recall_hit(self, sources: List, answer_text: str) -> bool:
+        """True if ANY retrieved source overlaps with the answer's key terms."""
+        terms = self._significant_terms(answer_text)
+        if not terms:
+            return False
+        threshold = max(1, min(3, len(terms) // 2))
+        for doc in sources:
+            page = doc.page_content.lower()
+            if sum(1 for t in terms if t in page) >= threshold:
+                return True
+        return False
 
     def _provider_error_message(self, error: Exception) -> Optional[str]:
         """Return a setup hint for LLM provider errors that should stop evaluation."""
@@ -164,6 +212,7 @@ class TelecomRAGEvaluator:
             options        = self._extract_options(entry)
             raw_answer     = entry.get("answer", "")
             correct_answer = self._parse_correct_answer(raw_answer)
+            answer_text    = self._answer_text(entry, options)
             category       = entry.get("category", "")
 
             # Ask the RAG system
@@ -171,8 +220,8 @@ class TelecomRAGEvaluator:
                 result      = self.rag.ask_mcq(question, options)
                 predicted   = self._parse_predicted_answer(result["answer"], options)
                 is_correct  = predicted.lower() == correct_answer.lower()
-                rr          = self._compute_reciprocal_rank(result["sources"], raw_answer)
-                recall_hit  = self._compute_recall_hit(result["sources"], raw_answer)
+                rr          = self._compute_reciprocal_rank(result["sources"], answer_text)
+                recall_hit  = self._compute_recall_hit(result["sources"], answer_text)
                 source_ids  = [
                     d.metadata.get("question_id", d.metadata.get("source", ""))
                     for d in result["sources"]

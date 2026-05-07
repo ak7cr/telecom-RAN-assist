@@ -11,6 +11,7 @@ Sources integrated:
   6. 3GPP PDFs        — any local PDFs placed in a directory (e.g. TS 38.300)
 """
 import json
+import re
 import requests
 import pyzipper
 from pathlib import Path
@@ -61,60 +62,54 @@ def download_teleqna(dest_dir: Path = DATA_DIR) -> Path:
 
 # ── Parsers ──────────────────────────────────────────────────────────
 
+_OPTION_LABEL_RE = re.compile(r"\boption\s*[1-5]\b", re.IGNORECASE)
+
+
+def _scrub_label_leak(text: str) -> str:
+    """Remove 'option N' references from explanations to prevent direct label leak."""
+    if not text:
+        return text
+    # Replace "option N" with "this option" so prose still reads sensibly.
+    return _OPTION_LABEL_RE.sub("this option", text)
+
+
 def teleqna_to_documents(json_path: Path) -> List[Document]:
     """
-    Convert TeleQnA JSON into LangChain Documents.
+    Convert TeleQnA JSON into retrieval-ready Documents.
 
-    TeleQnA format per entry:
-    {
-        "question": "What does ...",
-        "option 1": "...",
-        "option 2": "...",
-        "option 3": "...",
-        "option 4": "...",
-        "option 5": "...",   # optional
-        "answer": "option 1",
-        "explanation": "...",
-        "category": "Standards specifications"
-    }
-    We build a document from question + options + explanation.
-    This is the knowledge the RAG retrieves — not the Q&A pairs as-is.
+    Honest-RAG mode: index ONLY the topic (question text) + explanation prose.
+    The answer label and option list are NOT included — the retriever surfaces
+    the relevant background and the LLM has to reason from it like a real RAG.
     """
     with open(json_path, encoding="utf-8") as f:
         data = json.load(f)
 
     docs = []
+    skipped = 0
     for qid, entry in data.items():
-        question    = entry.get("question", "")
         explanation = entry.get("explanation", "")
         category    = entry.get("category", "general")
-        answer      = entry.get("answer", "")
 
-        # Collect options
-        options = []
-        for k in ["option 1", "option 2", "option 3", "option 4", "option 5"]:
-            if k in entry:
-                options.append(f"{k}: {entry[k]}")
+        # Strict-honest mode: index ONLY the explanation prose.
+        # No question text, no option texts, no answer label.
+        # The retriever has to semantically match question → background prose.
+        if not explanation or not explanation.strip():
+            skipped += 1
+            continue
 
-        # Build rich text block the retriever will embed
-        text = (
-            f"Question: {question}\n"
-            + "\n".join(options)
-            + f"\nAnswer: {answer}\n"
-            + (f"Explanation: {explanation}" if explanation else "")
-        )
+        explanation_clean = _scrub_label_leak(explanation)
 
         docs.append(Document(
-            page_content=text,
+            page_content=explanation_clean,
             metadata={
                 "source": "TeleQnA",
                 "question_id": qid,
                 "category": category,
-                "answer": answer,
             }
         ))
 
-    print(f"[data_loader] Loaded {len(docs)} TeleQnA documents")
+    print(f"[data_loader] Loaded {len(docs)} TeleQnA documents "
+          f"(skipped {skipped} without explanations)")
     return docs
 
 
@@ -387,8 +382,13 @@ def load_all_documents(
         tele_eval_samples:   N > 0 streams N samples from Tele-Eval.
         include_oran_bench:  Add O-RAN Bench Q&A.
     """
-    json_path = download_teleqna()
-    docs = teleqna_to_documents(json_path)
+    import os
+    docs = []
+    if os.environ.get("INCLUDE_TELEQNA_AS_DOCS", "1") == "1":
+        json_path = download_teleqna()
+        docs = teleqna_to_documents(json_path)
+    else:
+        print("[data_loader] Skipping TeleQnA in index (INCLUDE_TELEQNA_AS_DOCS=0)")
 
     if include_telelogs:
         docs.extend(load_telelogs())

@@ -58,17 +58,22 @@ PROMPT = ChatPromptTemplate.from_messages([
     ("human",  HUMAN_PROMPT),
 ])
 
-# MCQ prompt forces a parseable "option N" prefix so the evaluator can extract answers reliably.
+# MCQ prompt: brief grounded reasoning, then a final parseable "Final answer: option N".
 MCQ_SYSTEM_PROMPT = """You are a specialized Telecom RAN (Radio Access Network) assistant \
 with deep knowledge of 3GPP standards, ORAN specifications, and wireless communications.
 
-Use ONLY the provided context to answer.
+Use the provided context to answer. If the context is insufficient, rely on your background \
+knowledge of 3GPP/ORAN — do NOT refuse, always pick the best option.
 
-CRITICAL FORMATTING RULE: Your response MUST begin with exactly "option N:" where N is \
-the number (1–5) of the correct answer. Then provide a concise explanation citing the source.
+Process:
+1. Identify the key technical concept(s) the question is testing.
+2. Quote or paraphrase any relevant evidence from the context (1–2 short sentences).
+3. Eliminate clearly wrong options if helpful.
+4. End with EXACTLY this line on its own:
+   Final answer: option N
+   (where N is 1, 2, 3, 4, or 5)
 
-Example of a correctly formatted response:
-  option 3: <explanation citing the source document>
+The "Final answer: option N" line is mandatory and must be the LAST line of your response.
 
 Context:
 {context}
@@ -76,7 +81,7 @@ Context:
 
 MCQ_HUMAN_PROMPT = """{question}
 
-Select the single best option. Begin your answer with "option N:" (replace N with the correct number)."""
+Pick the single best option and end with: Final answer: option N"""
 
 MCQ_PROMPT = ChatPromptTemplate.from_messages([
     ("system", MCQ_SYSTEM_PROMPT),
@@ -148,8 +153,8 @@ class TelecomRAG:
                 search_type="mmr",
                 search_kwargs={
                     "k": RETRIEVER_K,
-                    "fetch_k": RETRIEVER_K * 4,
-                    "lambda_mult": 0.7,            # 1=similarity, 0=diversity
+                    "fetch_k": max(RETRIEVER_K * 6, 40),
+                    "lambda_mult": 0.6,            # 1=similarity, 0=diversity
                 },
             )
         else:
